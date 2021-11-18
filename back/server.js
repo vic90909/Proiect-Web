@@ -1,12 +1,93 @@
+const express = require('express');
+var cors = require('cors')
+var jwt = require('jsonwebtoken')
+const app = express();
+var morgan = require('morgan');
+const { nextTick } = require('process');
+var faker = require('faker');
+const { v4: uuidv4 } = require('uuid');
+const port = 3000;
 
+const bcrypt = require('bcrypt');
+const { exists } = require('fs');
+const secret = "ProgramareWeb"
 
-const { initializeApp, applicationDefault, cert } = require('firebase-admin/app');
-const { getFirestore, Timestamp, FieldValue } = require('firebase-admin/firestore');
+app.use(cors())
+app.use(morgan('dev'))
+app.use(express.urlencoded({ extended: false }))
+app.use(express.json())
 
-const serviceAccount = require('./firestore/proiect-a12b9-firebase-adminsdk-y85i2-a82cb6c8dd.json');
+var carsRouter = require('./routers/carRouter');
+var usersRouter = require('./routers/userRoute');
 
-initializeApp({
-  credential: cert(serviceAccount)
+app.use('/', carsRouter);
+app.use('/', usersRouter);
+
+var db = require('./database')
+
+app.post('/register', async (req, res) => {
+  let data = req.body;
+  let emailExist = false;
+
+  const userRef = db.collection('Users');
+  const snapshot = await userRef.where('email', '==', data.email).get();
+  if (!snapshot.empty) {
+    emailExist = true;
+  };
+
+  if (emailExist) {
+    res.send('User already registered.')
+  }
+  else {
+    bcrypt.hash(data.password, 12).then(async function (hash) {
+      data.password = hash;
+      // users.push(data);
+      const user = await db.collection('Users').add(data);
+      console.log(`You've just register with id ${user.id}`);
+      res.send('Succesfull registration');
+    });
+  }
 });
 
-const db = getFirestore(); //this is the reference to the database
+app.post('/login', async (req, res) => {
+  let data = req.body;
+
+  let emailFound = false;
+
+  const usersRef = db.collection('Users');
+  const snapshot = await usersRef.where('email', '==', data.email).get();
+
+  if (snapshot.empty) {
+    let response = {};
+    response.message = "No such email address.";
+    res.json(response);
+  } else {
+    emailFound = true;
+    snapshot.forEach(doc => {
+      bcrypt.compare(data.password, doc.data().password).then(async function (result) {
+        if (result) {
+          let token = jwt.sign({
+            email: doc.data().email
+          }, secret, { expiresIn: 60 * 60 });
+
+          let response = {};
+          response.token = token;
+          response.message = 'You have the right to access private resources'
+
+          res.json(response);
+        }
+        else {
+          let response = {};
+          response.message = "Password missmatch";
+          res.json(response)
+        }
+      });
+    });
+  }
+
+})
+
+app.listen(port, () => {
+  console.log(`Example app listening on port ${port}!`)
+});
+
