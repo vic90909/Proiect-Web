@@ -1,30 +1,12 @@
 <template>
   <div id="nav">
     <router-link to="/">Home</router-link> |
-    <router-link to="/about">About</router-link>
-    <table>
-      <tr>
-        <td>Manufacturer</td>
-        <td>Model</td>
-        <td>UserId</td>
-      </tr>
-      
-    </table>
-        <get-request-async-await/>
+    <router-link to="/login">Login</router-link> |
+    <router-link to="/register">Register</router-link>
+<router-view />
   </div>
 </template>
 
-<script>
-import GetRequestAsyncAwait from "./components/Cars";
-
-
-export default {
-  name: "app",
-  components: {
-    GetRequestAsyncAwait,
-  }
-};
-</script>
 <style>
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
