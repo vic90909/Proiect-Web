@@ -36,15 +36,14 @@ app.post('/register', async (req, res) => {
   };
 
   if (emailExist) {
-    res.send('User already registered.')
+    res.send({message:"User already registered.",exist: true})
   }
   else {
     bcrypt.hash(data.password, 12).then(async function (hash) {
       data.password = hash;
-      // users.push(data);
       const user = await db.collection('Users').add(data);
       console.log(`You've just register with id ${user.id}`);
-      res.send('Succesfull registration');
+      res.status(200).send({message:"Succesfull registration"});
     });
   }
 });
@@ -72,8 +71,9 @@ app.post('/login', async (req, res) => {
 
           let response = {};
           response.token = token;
+          response.id = doc.id;
           response.message = 'You have the right to access private resources'
-
+          
           res.json(response);
         }
         else {

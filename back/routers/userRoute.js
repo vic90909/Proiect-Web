@@ -15,6 +15,10 @@ router.get('/users/:id', async (req, res) => {
     res.json(await functions.getUserById(req.params.id,res));
 })
 
+router.get('/users/email/:email', async (req, res) => {
+    res.json(await functions.getUserByEmail(req.params.email,res));
+})
+
 router.delete('/users/:id', async (req, res) => {
     res.json(await functions.deleteUserById(req.params.id,res));
 })

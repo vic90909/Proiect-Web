@@ -1,9 +1,24 @@
 <template>
   <div id="nav">
-    <router-link to="/">Home</router-link> |
-    <router-link to="/login">Login</router-link> |
-    <router-link to="/register">Register</router-link>
-<router-view />
+    <nav>
+      <router-link to="/">
+        <div class="navigation__logo">Dealer Shop</div>
+      </router-link>
+      <div class="navigation__user" v-if="this.$store.state.user">
+        {{ this.$store.state.user.firstName }}
+      </div>
+      <router-link to="/login">
+        <div class="navigation__user" v-if="!this.$store.state.user">
+          Login
+        </div>
+      </router-link>
+      <router-link to="/login">
+        <div class="navigation__user" v-if="!this.$store.state.user">
+          Register
+        </div>
+      </router-link>
+    </nav>
+    <router-view />
   </div>
 </template>
 
@@ -12,20 +27,30 @@
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  text-align: center;
   color: #2c3e50;
+  min-height: 100vh;
+  background-color: #f3f5fa;
 }
 
-#nav {
-  padding: 30px;
+nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 5%;
+  background-color: purple;
+  color: white;
+  text-decoration: none;
 }
 
-#nav a {
+a {
+  color: inherit;
+  text-decoration: none;
+}
+.navigation__user {
   font-weight: bold;
-  color: #2c3e50;
 }
-
-#nav a.router-link-exact-active {
-  color: #42b983;
+.navigation__logo {
+  font-weight: bold;
+  font-size: 24px;
 }
 </style>

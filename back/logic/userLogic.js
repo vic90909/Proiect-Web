@@ -108,6 +108,35 @@ getUserById = async (id, res) => {
     });
 };
 
+getUserByEmail = async (email, res) => {
+  let users = [];
+  try {
+    const snapshot = await db
+      .collection("Users")
+      .where("email", "==", email)
+      .get();
+    snapshot.forEach((doc) => {
+      let user = {};
+      user.id = doc.id;
+      user.firstName = doc.data().firstName;
+      user.lastName = doc.data().lastName;
+      user.gender = doc.data().gender;
+      user.jobTitle = doc.data().jobTitle;
+      user.phone = doc.data().phone;
+      user.email = doc.data().email;
+      users.push(user);
+      console.log(user);
+    });
+    if (users.length > 0) {
+      res.status(200).send(users);
+    } else {
+      res.status(404).send({ message: "Not Found" });
+    }
+  } catch (err) {
+    res.status(500).send(err);
+  }
+};
+
 deleteUserById = async (id, res) => {
   let user = await db.collection("Users").doc(id).get();
   if (typeof user.data() === "undefined") {
@@ -126,4 +155,11 @@ deleteUserById = async (id, res) => {
   }
 };
 
-module.exports = { getAllUsers, postRandomUsers, getAllUsersIds, getUserById, deleteUserById };
+module.exports = {
+  getAllUsers,
+  postRandomUsers,
+  getAllUsersIds,
+  getUserById,
+  deleteUserById,
+  getUserByEmail,
+};

@@ -64,6 +64,7 @@ const validations = {
 
 export default {
   name: "Login",
+
   required: {
     validate(value) {
       return !helpers.isEmpty(value);
@@ -92,7 +93,6 @@ export default {
       let { valid, message } = result;
       this.message = message;
       console.log(`Vrei sa te autentifici cu email: ${this.formData.email}`);
-      console.log(utils.url);
 
       if (valid) {
         let data = {
@@ -111,8 +111,18 @@ export default {
             if (res.token) {
               localStorage.setItem("token", res.token);
               console.log("token:" + res.token);
+              console.log("id:" + res.id);
+              let id = res.id;
+              requestParameters.method = "GET";
+              requestParameters.body = null;
               this.$store.dispatch("login", true);
-              this.$router.push("/");
+              fetch(utils.url + "users/"+id, requestParameters).then((res) => {
+                res.json().then((res)=>{
+                  this.$store.dispatch("setUser", res);
+                  this.$router.push("/");
+                })
+              })
+              
             }
           });
         });
@@ -124,18 +134,18 @@ export default {
 
 <style>
 #loginGroup {
-    width: 100%;
+  width: 100%;
   text-align: center;
   margin-top: 100px;
   display: flex;
   flex-direction: column;
 }
 
-.loginGroupClass{
-display: inline-block;
+.loginGroupClass {
+  display: inline-block;
   margin: 0 auto;
   padding: 3px;
   border-radius: 10px;
-  background-color: #f34d00
+  background-color: #f34d00;
 }
 </style>

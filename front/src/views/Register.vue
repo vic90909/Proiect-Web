@@ -4,72 +4,94 @@
     <ui-form type="|" item-margin-bottom="16" action-align="center">
       <template #default="{ actionClass }">
         <div id="registerGroup">
-        <ui-form-field class="registerGroupClass">
-          <ui-textfield v-model="formData.lastName" required input-type="text">
-            Last name
-          </ui-textfield>
-        </ui-form-field>
-        <ui-form-field class="registerGroupClass">
-          <ui-textfield v-model="formData.firstName" required input-type="text">
-            First name
-          </ui-textfield>
-        </ui-form-field>
-        <ui-form-field class="registerGroupClass">
-          <ui-textfield
-            v-model="formData.email"
-            required
-            helper-text-id="email-field-helper-text"
-            input-type="email"
-          >
-            Email address
-          </ui-textfield>
-          <ui-textfield-helper
-            v-if="controls.helperText"
-            id="email-field-helper-text"
-            :visible="controls.isVisible"
-          >
-            Must be like me@example.com
-          </ui-textfield-helper>
-        </ui-form-field>
-        <ui-form-field class="registerGroupClass">
-          <ui-textfield v-model="formData.gender" required input-type="text">
-            Gender
-          </ui-textfield>
-        </ui-form-field>
-        <ui-form-field class="registerGroupClass">
-          <ui-textfield v-model="formData.jobTitle" required input-type="text">
-            Job Title
-          </ui-textfield>
-        </ui-form-field>
-        <ui-form-field class="registerGroupClass">
-          <ui-textfield v-model="formData.phone" required input-type="text">
-            Phone
-          </ui-textfield>
-        </ui-form-field>
-        <ui-form-field class="registerGroupClass">
-          <ui-textfield
-            v-model="formData.password"
-            input-type="password"
-            required
-            pattern=".{8,}"
-            helper-text-id="pw-validation-msg"
-            :attrs="{ autocomplete: 'current-password' }"
-            >Choose password</ui-textfield
-          >
-          <ui-textfield-helper id="pw-validation-msg" visible validMsg>
-            Must be at least 8 characters long
-          </ui-textfield-helper>
-        </ui-form-field>
-        <ui-form-field class="registerGroupClass">
-          <ui-textfield v-model="formData.repassword" input-type="password" required>
-            Repeat Password
-          </ui-textfield>
-        </ui-form-field>
-        <ui-alert v-if="message" state="error">{{ message }}</ui-alert>
-        <ui-form-field :class="actionClass">
-          <ui-button raised @click="register()">Submit</ui-button>
-          <ui-button outlined>Cancel</ui-button>
-        </ui-form-field>
+          <ui-form-field class="registerGroupClass">
+            <ui-textfield
+              v-model="formData.lastName"
+              required
+              input-type="text"
+            >
+              Last name
+            </ui-textfield>
+          </ui-form-field>
+          <ui-form-field class="registerGroupClass">
+            <ui-textfield
+              v-model="formData.firstName"
+              required
+              input-type="text"
+            >
+              First name
+            </ui-textfield>
+          </ui-form-field>
+          <ui-form-field class="registerGroupClass">
+            <ui-textfield
+              v-model="formData.email"
+              required
+              helper-text-id="email-field-helper-text"
+              input-type="email"
+            >
+              Email address
+            </ui-textfield>
+            <ui-textfield-helper
+              v-if="controls.helperText"
+              id="email-field-helper-text"
+              :visible="controls.isVisible"
+              class="registerGroupHelperClass"
+            >
+              Must be like me@example.com
+            </ui-textfield-helper>
+          </ui-form-field>
+          <ui-form-field class="registerGroupClass">
+            <ui-textfield v-model="formData.gender" required input-type="text">
+              Gender
+            </ui-textfield>
+          </ui-form-field>
+          <ui-form-field class="registerGroupClass">
+            <ui-textfield
+              v-model="formData.jobTitle"
+              required
+              input-type="text"
+            >
+              Job Title
+            </ui-textfield>
+          </ui-form-field>
+          <ui-form-field class="registerGroupClass">
+            <ui-textfield v-model="formData.phone" required input-type="text">
+              Phone
+            </ui-textfield>
+          </ui-form-field>
+          <ui-form-field class="registerGroupClass">
+            <ui-textfield
+              v-model="formData.password"
+              input-type="password"
+              required
+              pattern=".{8,}"
+              helper-text-id="pw-validation-msg"
+              :attrs="{ autocomplete: 'current-password' }"
+              >Choose password</ui-textfield
+            >
+            <ui-textfield-helper
+              id="pw-validation-msg"
+              visible
+              validMsg
+              class="registerGroupHelperClass"
+            >
+              Must be at least 8 characters long
+            </ui-textfield-helper>
+          </ui-form-field>
+          <ui-form-field class="registerGroupClass">
+            <ui-textfield
+              v-model="formData.repassword"
+              input-type="password"
+              required
+            >
+              Repeat Password
+            </ui-textfield>
+          </ui-form-field>
+          <ui-alert v-if="message" state="error">{{ message }}</ui-alert>
+          <ui-form-field :class="actionClass">
+            <ui-button raised @click="register()">Submit</ui-button>
+            <ui-button outlined>Cancel</ui-button>
+          </ui-form-field>
         </div>
       </template>
     </ui-form>
@@ -82,7 +104,7 @@
 <script>
 import utils from "../utils.js";
 import { useValidator, helpers } from "balm-ui";
-
+// import {useRouter} from 'vue';
 const validations = {
   lastName: {
     label: "Last name",
@@ -96,7 +118,7 @@ const validations = {
     label: "Email",
     validator: "required, email",
     email: {
-      validate(value) {
+      async validate(value) {
         return /^(([^<>()\]\\.,;:\s@"]+(\.[^<>()\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,24}))$/.test(
           value
         );
@@ -104,15 +126,15 @@ const validations = {
       message: "Email address should be like me@example.com",
     },
   },
-    gender: {
+  gender: {
     label: "Gender",
     validator: "required",
   },
-    jobTitle: {
+  jobTitle: {
     label: "Job Title",
     validator: "required",
   },
-    phone: {
+  phone: {
     label: "Phone",
     validator: "required",
   },
@@ -185,8 +207,6 @@ export default {
       let result = this.balmUI.validate(this.formData);
       let { valid, message } = result;
       this.message = message;
-      console.log(`Vrei sa te inregistrezi cu email: ${this.formData.email}`);
-      console.log(utils.url);
 
       if (valid) {
         let data = {
@@ -195,7 +215,7 @@ export default {
           email: this.formData.email,
           gender: this.formData.gender,
           jobTitle: this.formData.jobTitle,
-          phone:this.formData.phone,
+          phone: this.formData.phone,
           password: this.formData.password,
         };
 
@@ -204,7 +224,13 @@ export default {
         requestParameters.body = JSON.stringify(data);
 
         fetch(utils.url + "register", requestParameters).then((res) => {
-          res.text().then((res) => (this.mesaj = res));
+          res.json().then((res) => {
+            this.mesaj = res.message;
+            console.log(this.mesaj);
+            if (new String(this.mesaj).valueOf() != new String("User already registered.").valueOf()) {
+              this.$router.push("/login");
+            }
+          });
         });
       }
     },
@@ -217,18 +243,23 @@ export default {
   min-width: 300px;
 }
 #registerGroup {
-    width: 100%;
+  width: 100%;
   text-align: center;
-  margin-top: 100px;
+  margin: 100px 0 100px 0;
   display: flex;
   flex-direction: column;
 }
 
-.registerGroupClass{
-display: inline-block;
+.registerGroupClass {
   margin: 0 auto;
   padding: 3px;
   border-radius: 10px;
-  background-color: #f34d00
+  border: 2px solid #f34d00;
+  display: flex;
+  flex-direction: column;
+}
+
+.registerGroupHelperClass {
+  size: 50px;
 }
 </style>
