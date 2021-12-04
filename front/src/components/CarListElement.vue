@@ -16,6 +16,9 @@
             >Delete</ui-button
           ></ui-grid-cell
         >
+
+         
+        >
       </ui-grid>
     </div>
   </div>
@@ -75,7 +78,8 @@ export default {
           console.log(res);
         })
       )
-    }
+    },
+
   },
 };
 </script>

@@ -4,6 +4,7 @@ export const CarModule = {
   state: {
     cars: [],
     car: null,
+    editCar: null,
   },
 
   getters: {
@@ -12,6 +13,9 @@ export const CarModule = {
     },
     car: (state) => {
       return state.car;
+    },
+    editCar: (state) => {
+      return state.editCar;
     },
   },
 
@@ -39,6 +43,9 @@ export const CarModule = {
     BUY_CAR: (state, car) => {
       state.cars = state.cars.filter((c) => c.id != car.id);
     },
+    SET_EDIT_CAR: (state, car) => {
+      state.editCar = car;
+    },
   },
 
   // Actions are functions that you call throughout your application that call mutations.
@@ -60,6 +67,10 @@ export const CarModule = {
     },
     buyCar: ({ commit }, payload) => {
       commit("BUY_CAR", payload);
+    },
+    setCarForEdit: ({ commit }, payload) => {
+      commit("SET_EDIT_CAR", payload);
+      console.log(payload)
     },
   },
 };

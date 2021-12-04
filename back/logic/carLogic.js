@@ -179,7 +179,6 @@ postCar = async (body, res) => {
       await db.collection("Cars").add(car).then(response=>{
         res.status(200).send(response._path.segments[1]);
       });
-      
     })
     .catch((err) => {
       res.status(404).send({ message: err.message });

@@ -17,7 +17,7 @@ import utils from "../utils.js";
 import UserCarListElement from "@/components/UserCarListElement.vue";
 import { reactive, computed } from "vue";
 import { useStore } from "vuex";
-import {useRouter} from 'vue-router'
+import { useRouter } from "vue-router";
 
 export default {
   name: "UserCarList",
@@ -47,7 +47,7 @@ export default {
     });
 
     function remove(userCar) {
-      store.dispatch("Car/deleteCar",userCar.id);
+      store.dispatch("Car/deleteCar", userCar.id);
     }
 
     let url = utils.url;
@@ -73,15 +73,16 @@ export default {
       );
     }
 
-    function addNewCar(){
-      router.push({path:"/registerCar"})
+    function addNewCar() {
+      router.push({ path: "/registerCar" });
     }
 
     return {
       state,
       cars,
       remove,
-      addNewCar
+      addNewCar,
+      
     };
   },
 };

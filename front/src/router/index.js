@@ -7,6 +7,7 @@ import Car from "../views/Car.vue";
 import UserCarList from "../views/UserCarList.vue";
 import AdminUserPanel from "../views/UserList.vue";
 import RegisterCar from "../views/RegisterCar.vue";
+import EditCar from "../views/EditCar.vue";
 import store from "../store";
 
 const routes = [
@@ -53,6 +54,11 @@ const routes = [
     path: "/registerCar/",
     name: "RegisterCar",
     component: RegisterCar,
+  },
+  {
+    path: "/editCar/:id",
+    name: "EditCar",
+    component: EditCar,
   },
 ];
 
