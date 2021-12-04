@@ -104,7 +104,7 @@
 <script>
 import utils from "../utils.js";
 import { useValidator, helpers } from "balm-ui";
-// import {useRouter} from 'vue';
+
 const validations = {
   lastName: {
     label: "Last name",

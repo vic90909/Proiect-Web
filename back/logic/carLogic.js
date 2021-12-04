@@ -35,8 +35,6 @@ function checkAuthorization(req, res, next) {
   }
 }
 
-/* Products operations */
-
 postRandomCars = async (req, res) => {
   const usersIds = await usersFunctions.getAllUsersIds();
   let vehicles = [];
@@ -47,12 +45,65 @@ postRandomCars = async (req, res) => {
       price: faker.commerce.price() * 100,
       plate: faker.vehicle.vin(),
       color: faker.vehicle.color(),
+      description:faker.commerce.description(),
       userId: usersIds[Math.floor(Math.random() * usersIds.length)].id,
     };
     await db.collection("Cars").add(vehicle);
     vehicles.push(vehicle);
   }
   res.status(200).send(vehicles);
+};
+
+buyCar = async (id, body, res) => {
+  let seller = null;
+  let buyer = null;
+  console.log(id)
+  console.log(body)
+  await db
+    .collection("Users")
+    .doc(body.idSeller)
+    .get()
+    .then(async (responseSeller) => {
+      seller = responseSeller;
+      console.log(seller.data())
+      await db
+        .collection("Users")
+        .doc(body.idBuyer)
+        .get()
+        .then(async (responseBuyer) => {
+          buyer = responseBuyer;
+          console.log(buyer)
+          const car = await db.collection("Cars").doc(id).get();
+
+          if (
+            typeof car.data() !== "undefined" &&
+            typeof seller.data() !== "undefined" &&
+            typeof buyer.data() !== "undefined"
+          ) {
+            let newCar = {
+              userId: buyer.id,
+            };
+
+            db.collection("Cars")
+              .doc(id)
+              .update(newCar)
+              .then(() => {
+                res.status(200).send({ message: "Update successful" });
+              })
+              .catch((err) => {
+                res.status(500).send({ message: err.message });
+              });
+          } else {
+            res.status(404).send({ message: "Not found" });
+          }
+        })
+        .catch((err) => {
+          res.status(500).send({ message: err.message });
+        });
+    })
+    .catch((err) => {
+      res.status(500).send({ message: err.message });
+    });
 };
 
 getAllCars = async (req, res) => {
@@ -67,6 +118,7 @@ getAllCars = async (req, res) => {
       color: doc.data().color,
       plate: doc.data().plate,
       price: doc.data().price,
+      description: doc.data().description
     };
     cars.push(car);
   });
@@ -86,6 +138,7 @@ getAllCarsForUser = async (id, res) => {
       color: doc.data().color,
       plate: doc.data().plate,
       price: doc.data().price,
+      description: doc.data().description
     };
     cars.push(car);
   });
@@ -103,6 +156,7 @@ getCarById = async (id, res) => {
     color: response.data().color,
     plate: response.data().plate,
     price: response.data().price,
+    description: response.data().description,
   };
   res.send(car);
 };
@@ -120,9 +174,12 @@ postCar = async (body, res) => {
         plate: body.plate,
         color: body.color,
         userId: body.userId,
+        description: body.description,
       };
-      await db.collection("Cars").add(car);
-      res.status(200).send({ message: "Car added successfully" });
+      await db.collection("Cars").add(car).then(response=>{
+        res.status(200).send(response._path.segments[1]);
+      });
+      
     })
     .catch((err) => {
       res.status(404).send({ message: err.message });
@@ -177,4 +234,5 @@ module.exports = {
   postCar,
   deleteCarById,
   putCarById,
+  buyCar,
 };

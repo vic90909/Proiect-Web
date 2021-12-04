@@ -48,6 +48,7 @@ getAllUsers = async (req, res) => {
     user.jobTitle = doc.data().jobTitle;
     user.phone = doc.data().phone;
     user.email = doc.data().email;
+    user.isAdmin = doc.data().isAdmin;
     users.push(user);
   });
 
@@ -100,7 +101,7 @@ getUserById = async (id, res) => {
       user.jobTitle = response.data().jobTitle;
       user.phone = response.data().phone;
       user.email = response.data().email;
-
+      user.isAdmin = response.data().isAdmin;
       res.status(200).send(user);
     })
     .catch((err) => {
@@ -124,6 +125,7 @@ getUserByEmail = async (email, res) => {
       user.jobTitle = doc.data().jobTitle;
       user.phone = doc.data().phone;
       user.email = doc.data().email;
+      user.isAdmin = doc.data().isAdmin;
       users.push(user);
       console.log(user);
     });
@@ -137,6 +139,31 @@ getUserByEmail = async (email, res) => {
   }
 };
 
+admin = async (id, body, res) => {
+  let user = await db.collection("Users").doc(id).get();
+  console.log(user);
+  if (typeof user.data() === "undefined") {
+    res.status(404).send({ message: "User Not found" });
+  } else {
+    await db
+      .collection("Users")
+      .doc(id)
+      .update(body)
+      .then((user) => {
+        if (body.isAdmin == true) {
+          res.status(200).send("User with id " + id + " is now Admin");
+        } else {
+          res
+            .status(200)
+            .send("User with id " + id + " is not an Admin anymore");
+        }
+      })
+      .catch((err) => {
+        res.status(404).send({ message: err });
+      });
+  }
+};
+
 deleteUserById = async (id, res) => {
   let user = await db.collection("Users").doc(id).get();
   if (typeof user.data() === "undefined") {
@@ -146,8 +173,34 @@ deleteUserById = async (id, res) => {
       .collection("Users")
       .doc(id)
       .delete()
+      .then(async (resUser) => {
+        let snapshotCars = await db
+          .collection("Cars")
+          .where("userId", "==", user.id)
+          .get();
+        snapshotCars.forEach((doc) => {
+          doc.ref.delete();
+        });
+      })
+      .catch((err) => {
+        res.status(404).send({ message: err });
+      });
+  }
+};
+
+putUserById = async (id, body, res) => {
+  console.log(id, body);
+  let user = await db.collection("Users").doc(body.id).get();
+  console.log(user);
+  if (typeof user.data() === "undefined") {
+    res.status(404).send({ message: "User Not found" });
+  } else {
+    await db
+      .collection("Users")
+      .doc(id)
+      .update(body)
       .then((user) => {
-        res.status(200).send("User with id " + id + " deleted");
+        res.status(200).send("User with id " + id + " updated");
       })
       .catch((err) => {
         res.status(404).send({ message: err });
@@ -162,4 +215,6 @@ module.exports = {
   getUserById,
   deleteUserById,
   getUserByEmail,
+  putUserById,
+  admin,
 };

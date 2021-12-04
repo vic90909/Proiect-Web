@@ -8,5 +8,13 @@ module.exports = {
           'balm-ui-css': 'balm-ui/dist/balm-ui.css'
         }
       }
-    }
+    },
+    css: {
+      loaderOptions: {
+        sass: {
+          additionalData: 
+          '@import "@/styles/base.scss";'
+        },
+      },
+    },
   };

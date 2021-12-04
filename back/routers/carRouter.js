@@ -31,5 +31,9 @@ router.put('/cars/:id', async (req, res) =>{
     res.json(await functions.putCarById(req.params.id,req.body,res));
 })
 
+router.put('/cars/sell/:id', async (req, res) =>{
+    res.json(await functions.buyCar(req.params.id,req.body,res));
+})
+
  
 module.exports = router;
