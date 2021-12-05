@@ -34,26 +34,26 @@ function checkAuthorization(req, res, next) {
 
 /* Products operations */
 
-getAllUsers = async (req, res) => {
-  let users = [];
-  //Get all products
-  const response = await db.collection("Users").get();
-  //Iterate over
-  response.forEach((doc) => {
-    let user = {};
-    user.id = doc.id;
-    user.firstName = doc.data().firstName;
-    user.lastName = doc.data().lastName;
-    user.gender = doc.data().gender;
-    user.jobTitle = doc.data().jobTitle;
-    user.phone = doc.data().phone;
-    user.email = doc.data().email;
-    user.isAdmin = doc.data().isAdmin;
-    users.push(user);
-  });
+getAllUsers = async () => {
 
-  //Respond with products array
-  return users;
+    let users = [];
+    //Get all products
+    const response = await db.collection("Users").get();
+    //Iterate over
+    response.forEach((doc) => {
+      let user = {};
+      user.id = doc.id;
+      user.firstName = doc.data().firstName;
+      user.lastName = doc.data().lastName;
+      user.gender = doc.data().gender;
+      user.jobTitle = doc.data().jobTitle;
+      user.phone = doc.data().phone;
+      user.email = doc.data().email;
+      user.isAdmin = doc.data().isAdmin;
+      users.push(user);
+    });
+  
+    return users;
 };
 
 postRandomUsers = async () => {
@@ -72,7 +72,7 @@ postRandomUsers = async () => {
       console.log(user);
     });
   }
-  res.status(200).send({ message: "Success" });
+  return { message: "Success" };
 };
 
 getAllUsersIds = async (req, res) => {
@@ -87,26 +87,27 @@ getAllUsersIds = async (req, res) => {
   return usersIds;
 };
 
-getUserById = async (id, res) => {
-  await db
-    .collection("Users")
-    .doc(id)
-    .get()
-    .then((response) => {
-      let user = {};
-      user.id = response.id;
-      user.firstName = response.data().firstName;
-      user.lastName = response.data().lastName;
-      user.gender = response.data().gender;
-      user.jobTitle = response.data().jobTitle;
-      user.phone = response.data().phone;
-      user.email = response.data().email;
-      user.isAdmin = response.data().isAdmin;
-      res.status(200).send(user);
-    })
-    .catch((err) => {
-      res.status(404).send({ message: "User not found" });
-    });
+getUserById =  (id) => {
+  return db  //* return the promise
+   .collection("Users")
+   .doc(id)
+   .get()
+   .then((response) => {
+     let user = {};
+     user.id = response.id;
+     user.firstName = response.data().firstName;
+     user.lastName = response.data().lastName;
+     user.gender = response.data().gender;
+     user.jobTitle = response.data().jobTitle;
+     user.phone = response.data().phone;
+     user.email = response.data().email;
+     user.isAdmin = response.data().isAdmin;
+     // res.status(200).send(user); //* should be handled by caller
+     return user //* return the data
+   })
+   .catch((err) => {    
+     return null
+   });
 };
 
 getUserByEmail = async (email, res) => {

@@ -109,9 +109,9 @@ export default {
         gender: store.state.User.user.gender,
         jobTitle: store.state.User.user.jobTitle,
         phone: store.state.User.user.phone,
+        isAdmin: store.state.User.user.isAdmin
       },
     });
-    console.log(state.user);
 
     let fullname = computed(() => {
       return `${state.user.firstName} ${state.user.lastName}`;

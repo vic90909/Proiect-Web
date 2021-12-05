@@ -8,11 +8,25 @@ router.post("/users/random100", async (req, res) => {
 });
 
 router.get("/users", async (req, res) => {
-  res.json(await functions.getAllUsers(req, res));
+  try {  
+    const response = await functions.getAllUsers()
+    res.status(200).json(response);
+  } catch(err) {
+    res.sendStatus(500)
+  }
 });
 
 router.get("/users/:id", async (req, res) => {
-  res.json(await functions.getUserById(req.params.id, res));
+  functions.getUserById(req.params.id)
+    .then((response) =>  {
+      if(response === null)
+        res.status(404).json({ message: "User not found" });
+      else
+        res.status(200).json(response);
+    })
+    .catch(er=>{
+      res.status(500).send(er.message)
+    })
 });
 
 router.get("/users/email/:email", async (req, res) => {

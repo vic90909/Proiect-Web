@@ -45,7 +45,7 @@ postRandomCars = async (req, res) => {
       price: faker.commerce.price() * 100,
       plate: faker.vehicle.vin(),
       color: faker.vehicle.color(),
-      description:faker.commerce.description(),
+      description: faker.commerce.description(),
       userId: usersIds[Math.floor(Math.random() * usersIds.length)].id,
     };
     await db.collection("Cars").add(vehicle);
@@ -106,7 +106,7 @@ buyCar = async (id, body, res) => {
     });
 };
 
-getAllCars = async (req, res) => {
+getAllCars = async () => {
   const snapshot = await db.collection("Cars").get();
   let cars = [];
   snapshot.forEach((doc) => {
@@ -123,7 +123,8 @@ getAllCars = async (req, res) => {
     cars.push(car);
   });
 
-  res.status(200).send(cars);
+  // res.status(200).send(cars); //* should be handled by caller
+  return cars  //* return the data
 };
 
 getAllCarsForUser = async (id, res) => {
@@ -144,21 +145,30 @@ getAllCarsForUser = async (id, res) => {
   });
 
   res.status(200).send(cars);
+  return
 };
 
-getCarById = async (id, res) => {
-  const response = await db.collection("Cars").doc(id).get();
-  let car = {
-    id: response.id,
-    userId: response.data().userId,
-    manufacturer: response.data().manufacturer,
-    model: response.data().model,
-    color: response.data().color,
-    plate: response.data().plate,
-    price: response.data().price,
-    description: response.data().description,
-  };
-  res.send(car);
+getCarById = async (id) => {
+  return db  //* return the promise
+    .collection("Cars")
+    .doc(id)
+    .get()
+    .then((response) => {
+      let car = {
+        id: response.id,
+        userId: response.data().userId,
+        manufacturer: response.data().manufacturer,
+        model: response.data().model,
+        color: response.data().color,
+        plate: response.data().plate,
+        price: response.data().price,
+        description: response.data().description,
+      }
+      return car
+    })
+    .catch((err) => {
+      return null
+    });
 };
 
 postCar = async (body, res) => {
@@ -176,7 +186,7 @@ postCar = async (body, res) => {
         userId: body.userId,
         description: body.description,
       };
-      await db.collection("Cars").add(car).then(response=>{
+      await db.collection("Cars").add(car).then(response => {
         res.status(200).send(response._path.segments[1]);
       });
     })
@@ -203,24 +213,24 @@ deleteCarById = async (id, res) => {
   }
 };
 
-putCarById = async (id, body, res) => {
+putCarById = async (id, body) => {
   let user = await db.collection("Users").doc(body.userId).get();
   let car = await db.collection("Cars").doc(id).get();
-
+  console.log(car,user)
   if (typeof car.data() === "undefined") {
-    res.status(404).send({ message: "Car not found" });
+    return null
   } else if (typeof user.data() === "undefined") {
-    res.status(404).send({ message: "User Not found" });
+    return null
   } else {
-    await db
+    db
       .collection("Cars")
       .doc(id)
       .update(body)
       .then((car) => {
-        res.status(200).send("Car with id " + id + " updated");
+        return { message: "Car with id " + id + " updated" };
       })
       .catch((err) => {
-        res.status(404).send({ message: err });
+        return null;
       });
   }
 };

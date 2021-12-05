@@ -63,6 +63,7 @@ import CarListElement from "@/components/CarListElement.vue";
 import { useRouter } from "vue-router";
 import { reactive, computed } from "vue";
 import { useStore } from "vuex";
+import { HTTP } from '../http-common';
 
 const options = [
   {
@@ -116,11 +117,20 @@ export default {
             car.model.indexOf(state.search.model) >= 0
         );
     });
-    console.log(...store.state.pages);
+    console.log("Buna CarList");
     let url = utils.url;
     let requestParam = utils.globalRequestParameters;
     requestParam.method = "GET";
     requestParam.body = null;
+
+    HTTP.get("cars")   
+      .then((response) => {
+        // JSON responses are automatically parsed.
+        console.log("Axios", response.data);
+      })
+      .catch((e) => {
+        this.errors.push(e);
+      });
     if (cars.value.length == 0) {
       fetch(url + "cars", requestParam).then((res) =>
         res.json().then(async (res) => {
@@ -283,12 +293,11 @@ export default {
   justify-content: center;
 }
 
-.goToGroup{
+.goToGroup {
   width: 10%;
   display: flex;
   gap: 10px;
   flex-direction: column;
-  margin-bottom:100px;
+  margin-bottom: 100px;
 }
-
 </style>

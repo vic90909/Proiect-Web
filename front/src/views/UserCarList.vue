@@ -1,6 +1,8 @@
 <template>
   <div>
-    <ui-button @click="addNewCar">Add New Car</ui-button>
+    <div class="buttonAdd">
+      <ui-button @click="addNewCar">Add New Car</ui-button>
+    </div>
     <div class="car-list__wrapper" v-if="this.$store.state.User.user">
       <UserCarListElement
         :car="elem"
@@ -82,15 +84,29 @@ export default {
       cars,
       remove,
       addNewCar,
-      
     };
   },
 };
 </script>
 
-<style>
+<style scoped>
 .car-list__search-group {
   margin: 0 auto;
   gap: 5px;
+}
+
+.mdc-button__ripple {
+  color: white;
+  width: 500px;
+}
+
+.mdc-button{
+    width: 100%;
+    margin: 50px 100px 25px 100px;
+}
+
+.buttonAdd {
+  display: flex;
+  justify-content: center;
 }
 </style>

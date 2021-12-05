@@ -66,7 +66,7 @@ export default {
         (res) => {
           res.json().then((res) => {
             console.log(res);
-            store.dispatch("setCarForEdit",res)
+            store.dispatch("Car/setCarForEdit",res)
             console.log(store.state.Car.editCar);
             router.push({ path: `/editCar/${state.cara.id}` });
           });

@@ -1,16 +1,17 @@
 <template>
   <div class="user-profile_wrapper" >
-    <h1>Name: {{ fullname }}</h1>
-    <h1>Email: {{ state.user.email }}</h1>
-    <h1>Gender: {{ state.user.gender }}</h1>
-    <h1>Job Title: {{ state.user.jobTitle }}</h1>
-    <h1>Phone: {{ state.user.phone }}</h1>
-
+        <label><strong>Name:</strong> {{ fullname }}</label>
+        <label><strong>Gender:</strong> {{ userr.gender }}</label>
+        <label><strong>Email:</strong> {{ userr.email }}</label>
+        <label><strong>Job Title:</strong> {{ userr.jobTitle }}</label>
+        <label><strong>Phone:</strong> {{ userr.phone }}</label>
   </div>
+  
 </template>
 
 <script>
 import {reactive, computed} from 'vue'
+import {useStore} from 'vuex'
 export default {
   name: "UserProfileDate",
   props: {
@@ -19,19 +20,23 @@ export default {
       required: true,
     },
   },
-  setup(props) {
-
+  setup() {
+    const store = useStore();
     const state = reactive({
-        user: props.user
+        user: store.state.User.user
     })
-    console.log(state.user)
 
     let fullname = computed(()=>{
-        return `${state.user.firstName} ${state.user.lastName}`;
+        return `${store.state.User.user.firstName} ${store.state.User.user.lastName}`;
+    })
+
+    let userr = computed(()=>{
+      return store.state.User.user
     })
     return{
         state,
-        fullname
+        fullname,
+        userr
     }
   },
 };
@@ -39,11 +44,13 @@ export default {
 
 <style scoped>
 .user-profile_wrapper{
-    margin-top: 50px;
+    margin: 50px 30%;
+    padding:25px;
     border: 2px solid;
     border-radius: 10px;
     display: flex;
     flex-direction: column;
+    gap:10px;
     align-items: center;
 }
 </style>

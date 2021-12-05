@@ -132,7 +132,6 @@ export default {
                     console.log("Jos de tot");
                     this.$store.dispatch("User/setUser", res);
                     console.log(this.$store.state.User.user);
-
                     this.$router.push("/");
                   });
                 }

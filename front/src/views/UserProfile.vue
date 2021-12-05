@@ -1,28 +1,33 @@
 <template>
   <div>
-    <UserProfileData :user="user" v-show="!isEditable" />
+    User Profile
+    <UserProfileData :user="usera" v-show="!isEditable" />
     <UserProfileDataEditable
-      :user="user"
+      :user="usera"
       @editUser="editUser"
       v-show="isEditable"
     />
-    <ui-button class="user-profile__buttons" @click="edit" v-show="!isEditable"
-      >Edit</ui-button
-    >
 
-    <ui-button
-      class="user-profile__buttons"
-      @click="cancelEdit"
-      v-show="isEditable"
-      >Cancel Edit</ui-button
-    >
-
-    <ui-button
-      class="user-profile__buttons"
-      @click="deleteAccount"
-      v-show="!isEditable"
-      >Delete account</ui-button
-    >
+    <div class="buttonsGroup">
+      <ui-button
+        class="user-profile__buttons"
+        @click="edit"
+        v-show="!isEditable"
+        >Edit</ui-button
+      >
+      <ui-button
+        class="user-profile__buttons"
+        @click="cancelEdit"
+        v-show="isEditable"
+        >Cancel Edit</ui-button
+      >
+      <ui-button
+        class="user-profile__buttons"
+        @click="deleteAccount"
+        v-show="!isEditable"
+        >Delete account</ui-button
+      >
+    </div>
   </div>
 </template>
 
@@ -31,7 +36,7 @@ import UserProfileData from "@/components/UserProfileData.vue";
 import UserProfileDataEditable from "@/components/UserProfileDataEditable.vue";
 import { useStore } from "vuex";
 import { reactive, computed } from "vue";
-import {useRouter} from 'vue-router';
+import { useRouter } from "vue-router";
 import utils from "../utils.js";
 
 export default {
@@ -46,7 +51,7 @@ export default {
     });
 
     const isEditable = computed(() => store.state.isEditable);
-    const user = computed(() => store.state.User.user);
+    const usera = computed(() => store.state.User.user);
 
     function edit() {
       store.dispatch("setEditable", true);
@@ -63,18 +68,18 @@ export default {
       let url = utils.url;
       let requestParam = utils.globalRequestParameters;
       requestParam.method = "DELETE";
-      requestParam.body = null
+      requestParam.body = null;
       fetch(url + "users/" + state.user.id, requestParam).then((res) => {
         console.log(res);
       });
-      router.push({path:"/login"});
+      router.push({ path: "/login" });
     }
 
     function editUser(user) {
       if (store.state.isEditable) {
         store.dispatch("setEditable", false);
         store.dispatch("User/setUser", user);
-
+        console.log(store.state.User.user);
         let url = utils.url;
         let requestParam = utils.globalRequestParameters;
         requestParam.method = "PUT";
@@ -90,7 +95,7 @@ export default {
       edit,
       isEditable,
       editUser,
-      user,
+      usera,
       cancelEdit,
       deleteAccount,
     };
@@ -99,16 +104,30 @@ export default {
 </script>
 
 <style scoped>
-.mdc-button__ripple {
-  color: white;
-}
 
-.user-profile__buttons {
+
+/* .user-profile__buttons {
   display: flex;
   flex-direction: column;
   justify-content: center;
   margin: 0 auto;
   margin-bottom: 15px;
   margin-top: 10px;
+} */
+
+.mdc-button__ripple {
+  color: white;
+  border-radius: 10px;
+}
+
+.mdc-button{
+  margin: 15px 30%;
+  border-radius: 10px;
+}
+
+.buttonsGroup {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 </style>

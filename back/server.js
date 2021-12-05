@@ -13,6 +13,11 @@ const { exists } = require('fs');
 const secret = "ProgramareWeb"
 
 app.use(cors())
+app.use((req, res, next)=>{
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+  next();
+});
 app.use(morgan('dev'))
 app.use(express.urlencoded({ extended: false }))
 app.use(express.json())
@@ -74,12 +79,12 @@ app.post('/login', async (req, res) => {
           response.id = doc.id;
           response.message = 'You have the right to access private resources'
           
-          res.json(response);
+          res.send(response);
         }
         else {
           let response = {};
           response.message = "Password missmatch";
-          res.json(response)
+          res.send(response)
         }
       });
     });
